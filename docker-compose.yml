@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  web:
+    build: ./server
+    container_name: magento_web
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+    volumes:
+      - './www:/var/www/html/'
+    environment:
+      - MAGE_ROOT=/var/www/html
+      - MAGE_DEBUG_SHOW_ARGS=1
+      - MAGE_MODE=developer
+      - PHP_XDEBUG_ENABLED=1
+      - PHP_EXTENSION_XDEBUG=1
+      - XDEBUG_CONFIG=remote_host=localhost
+      - PHP_IDE_CONFIG=serverName=magento
+    expose:
+      - 9000
+      - 80
+      - 8080
+  db:
+    image: percona
+    container_name: magento_db
+    restart: on-failure
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=magento
+      - MYSQL_USER=magento
+      - MYSQL_PASSWORD=magento
+      - TERM=magento
+    expose:
+      - 3308
+      - 3306
